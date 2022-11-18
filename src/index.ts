@@ -1,4 +1,4 @@
-const pdf = require("html-pdf");
+import pdf from "html-pdf";
 const html = `
                 <!DOCTYPE html>
                 <html>
@@ -57,7 +57,7 @@ const options = {
 };
 
   pdf
-  .create(html, options).toFile('./output.pdf', ()=> {
+  .create(html, options as any).toFile('./output.pdf', ()=> {
      console.log('done!')
   })
  
