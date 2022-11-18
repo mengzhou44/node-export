@@ -1,63 +1,28 @@
-import pdf from "html-pdf";
-const html = `
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                        <meta charset="utf-8" />
-                         <style>
-                           .list {
-                              color: red; 
-                              border: 1px solid green;
-                           }
+import  puppeteer from 'puppeteer';
 
-                           .container {
-                              display: flex; 
-                              justify-content: flex-start; 
-                           }
+export async function createPDF(htmlContent: string): Promise<Buffer> {
+   try {
 
-                           .item {
-                              margin: 20px; 
-                              border: 1px solid blue;
-                           }
-                         </style>
-                    </head>
-                    <body>
-                        <h1 class='list'>USER LISTS BY PROGRAMMERTS.IO</h1>
-                        <div class='container'>
-                            <div class='item'>
-                                <p>Name: David </p>
-                                <p>Age: 26 </p>
-                            </div>
+        const browser = await puppeteer.launch();        
+        
+        const page = await browser.newPage();
+        await page.setContent(htmlContent,  {waitUntil: 'domcontentloaded'})
+        await page.emulateMediaType('screen');
+        
+        const pdf = await page.pdf({
+            path: 'result.pdf',
+            margin: { top: '100px', right: '50px', bottom: '100px', left: '50px' },
+            printBackground: true,
+            format: 'A4',
+        });
+        
+        await browser.close()
 
-                            <div class='item'>
-                                <p>Name: Mark </p>
-                                <p>Age: 31 </p>
-                            </div>
-                        </div>
-                    </body>
-                </html>
-            `
-const options = {
-    format: "A3",
-    orientation: "portrait",
-    border: "10mm",
-    header: {
-        height: "45mm",
-        contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
-    },
-    footer: {
-        height: "28mm",
-        contents: {
-            first: 'Cover page',
-            2: 'Second page', // Any page number is working. 1-based index
-            default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
-            last: 'Last Page'
-        }
-    }
-};
- 
-  pdf
-  .create(html, options as any).toFile('./output.pdf', ()=> {
-     console.log('done!')
-  })
+        return pdf
+   } catch(err) {
+        console.log('Error occured when creating PDF file')
+        throw err
+   }      
+  
+}
  
