@@ -1,10 +1,9 @@
-const pdf = require("pdf-creator-node");
+const pdf = require("html-pdf");
 const html = `
                 <!DOCTYPE html>
                 <html>
                     <head>
                         <meta charset="utf-8" />
-                        <title>Hello world!</title>
                          <style>
                            .list {
                               color: red; 
@@ -23,7 +22,7 @@ const html = `
                          </style>
                     </head>
                     <body>
-                        <h1 class='list'>User List</h1>
+                        <h1 class='list'>USER LISTS BY PROGRAMMERTS.IO</h1>
                         <div class='container'>
                             <div class='item'>
                                 <p>Name: David </p>
@@ -57,18 +56,8 @@ const options = {
     }
 };
 
-var document = {
-    html,
-    data: {},
-    path: "./output.pdf",
-    type: "",
-  };
-
   pdf
-  .create(document, options)
-  .then((res) => {
-    console.log(res);
+  .create(html, options).toFile('./output.pdf', ()=> {
+     console.log('done!')
   })
-  .catch((error) => {
-    console.error(error);
-  });
+ 
